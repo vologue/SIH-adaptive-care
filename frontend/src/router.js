@@ -17,7 +17,18 @@ export default new Router({
     name: 'signup',
     component: () => import('./views/SignUp.vue')
   },
-
+  {
+    path: '/:user',
+    props: true,
+    component: () => import('./views/landing.vue'),
+    beforeEnter: (to, from, next) => {
+      if(localStorage.id)  {
+        next()
+      } else {
+        next('/')
+      }
+    },
+}
 
   ]
 })

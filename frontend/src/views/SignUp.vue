@@ -31,27 +31,24 @@
                                <v-text-field  prepend-icon="email" label="E-mail"  v-model="email" :rules="emailRules"  required ></v-text-field>
                                <v-textarea required :rules="addRules" auto-grow v-model="address" prepend-inner-icon="notes" label="Permanent Address" required></v-textarea>
                                <v-select prepend-icon="notes" v-bind:items="prob" v-model="prob" label="Problem"></v-select>
-                            <v-text-field  prepend-icon="phone" v-model="Mob_no" :counter="10" label="Mobile Number"  :rules="mobRules" type="text"  required ></v-text-field>
+                               <v-text-field  prepend-icon="phone" v-model="Mob_no" :counter="10" label="Mobile Number"  :rules="mobRules" type="text"  required ></v-text-field>
+                               <v-menu ref="menu" :close-on-content-click="false" v-model="menu" :nudge-right="40" :return-value.sync="date" lazy transition="scale-transition"
+                             offset-y full-width min-width="290px">
 
+                          <v-text-field slot="activator" v-model="date" label="Date of Joining the post" prepend-icon="event" readonly></v-text-field>
+                          <v-date-picker v-model="date" no-title scrollable>
+
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                            <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                          </v-date-picker>
+                        </v-menu>
                                </v-form>
 
                              </v-card-text>
                           <v-btn color="primary" :disabled="!valid1"  @click="continu">Next</v-btn>
                       <v-btn flat   @click="reset1">RESET</v-btn>
 
-
-                      </v-stepper-content>
-                      <v-stepper-content step="2">
-                        <v-card-text>
-
-
-                       <br><br><br><br><br>
-                       <br><br><br><br><br>
-
-                       <br><br><br><br><br>
-                       <br><br><br><br><br>
-
-                        </v-card-text>
 
                       </v-stepper-content>
                     </v-stepper-items>
@@ -72,14 +69,16 @@
   export default {
     data() {
       return {
+        menu:false,
         name: '',
         email: '',
         Mob_no: '',
         address: '',
+        date:null,
         prob:['Skin'],
         e1:0,
         valid1:true,
- gradient: 'to top right, rgba(63,81,181, .7), rgba(25,32,72, .7)',
+
 
         nameRules: [
           v => !!v || 'Name is required',
@@ -101,9 +100,13 @@
     },
 
     computed: {
-
-
-    },
+        loading() {
+          return this.$store.getters.loading
+        },
+        uid() {
+          return this.$store.getters.userId
+        }
+      },
     methods: {
       continu() {
 
@@ -114,6 +117,35 @@
       reset1() {
         this.$refs.form1.reset()
       },
+      async submit() {
+              this.$store.dispatch('loading', true)
+              //  console.log(this.loading)
+              try {
+                if (this.$refs.form1.validate()) {
+
+                  const postData = {
+                    name: this.name,
+                    email: this.email,
+                    password: this.password,
+                    DOB: this.date,
+                    address: this.address,
+                    prob: this.prob,
+                  }
+                  const response = await axios.post('http://localhost:5000/user/create', postData)
+                  this.$store.dispatch('loading', false)
+                  this.$store.dispatch('userId', response.data.uid)
+                  this.reset1()
+                  this.$router.push(`/login`)
+
+                }
+              } catch (e) {
+                this.$store.dispatch('loading', false)
+                console.log(this.loading)
+                console.log(e)
+              }
+
+
+            },
 
     }
   }

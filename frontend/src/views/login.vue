@@ -35,16 +35,57 @@
   export default {
     data() {
       return {
-
+        email: '',
+        password: '',
+        id: '',
+        name: '',
+        emailRules: [
+          v => !!v || 'E-mail is required',
+          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+        ],
+        passwordRules: [
+          v => !!v || 'password is required',
+          v => v.length > 8 && v.length < 12 || 'password must be between  8-12'
+        ]
       }
     },
-
+    beforeCreate() {
+      localStorage.clear()
+    },
     computed: {
-
-
+      userId() {
+        return this.$store.getters.userId
+      },
+      loading() {
+        return this.$store.getters.loading
+      }
     },
     methods: {
+      async login() {
+        if (this.$refs.loginForm.validate()) {
+        this.$store.dispatch('loading', true)
+        try {
+          const response = await axios.post('http://localhost:5000/authenticate', {
+            "email": this.email,
+            "password": this.password
+          })
+          this.$store.dispatch('loading', false)
+          console.log(response.data)
+          this.id = response.data.uid
+          this.name = response.data.name
 
+    //forlocalstorage
+          localStorage.id = this.id
+          localStorage.name = this.name
+          this.$store.dispatch('userId', this.id)
+          this.$store.dispatch('name' , this.name)
+          this.$router.push(`/${this.name}`)
+        } catch (e) {
+          this.$store.dispatch('loading', false)
+          console.log(e)
+        }
+      }
+    }
     }
   }
 
