@@ -21,7 +21,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn :loading="loading" :disabled="loading" color="primary" @click="login">Login</v-btn>
+            <v-btn  :loading="loading" :disabled="loading" color="primary" @click="login" mr-4>Login</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -65,7 +65,7 @@
         if (this.$refs.loginForm.validate()) {
         this.$store.dispatch('loading', true)
         try {
-          const response = await axios.post('http://localhost:5000/authenticate', {
+          const response = await axios.post('http://localhost:5000/api/authenticate', {
             "email": this.email,
             "password": this.password
           })

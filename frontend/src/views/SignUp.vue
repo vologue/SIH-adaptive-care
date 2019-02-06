@@ -131,7 +131,7 @@
                     address: this.address,
                     prob: this.prob,
                   }
-                  const response = await axios.post('http://localhost:5000/user/create', postData)
+                  const response = await axios.post('http://localhost:5000/api/user/create', postData)
                   this.$store.dispatch('loading', false)
                   this.$store.dispatch('userId', response.data.uid)
                   this.reset1()
