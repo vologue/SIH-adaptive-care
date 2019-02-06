@@ -7,8 +7,8 @@ virtualenv venv
 ```
 source venv/bin/activate
 ```
+## Install flask and Cors
 
-###Install flask and 
 ```
 pip install flask
 ```
